@@ -12,7 +12,7 @@
 #include "mmc.h"
 //#include "led.h"
 
-#include <io430x16x.h>
+#include <msp430.h>
 //#include "math.h"
 #include <string.h>
 

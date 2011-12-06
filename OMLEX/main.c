@@ -11,7 +11,7 @@
 #include "system.h"
 #include "lcd_new.h"
 #include "mmc.h"
-#include <io430x16x.h>
+#include <msp430.h>
 #include <string.h>
 
 #define DELAY_1   0
@@ -180,8 +180,10 @@ int main( void )
     }
 
     // CP and WP as input
-    P5DIR_bit.P5DIR_5 = 0;
-    P5DIR_bit.P5DIR_6 = 0;
+    //P5DIR_bit.P5DIR_5 = 0;
+    P5DIR &= ~BIT5;
+    //P5DIR_bit.P5DIR_6 = 0;
+    P5DIR &= ~BIT6;
 
     // card present
     while(P5IN&BIT6) {

@@ -1,6 +1,6 @@
 //lcd_nokia.h
 #include "lcd_new.h"
-#include <io430x16x.h>
+#include <msp430.h>
 
 // LCD memory index
 unsigned int  LcdMemIdx;
@@ -23,26 +23,38 @@ void LCDInit(void)
 {
 
   //  Pull-up on reset pin.
-  P5OUT_bit.P5OUT_4 = 1;
+  //P5OUT_bit.P5OUT_4 = 1;
+  P5OUT |= BIT4;
 
   // Pin configuration - all as output
-  P3DIR_bit.P3DIR_0 = 1;  // STE0
-  P3DIR_bit.P3DIR_1 = 1;  // SIMO0
-  P3DIR_bit.P3DIR_2 = 1;  // SOMI0 (D/S)
-  P3DIR_bit.P3DIR_3 = 1;  // ULCK0
-  P5DIR_bit.P5DIR_4 = 1;  // RES
+  //P3DIR_bit.P3DIR_0 = 1;  // STE0
+  P3DIR |= BIT0;
+  //P3DIR_bit.P3DIR_1 = 1;  // SIMO0
+  P3DIR |= BIT1;
+  //P3DIR_bit.P3DIR_2 = 1;  // SOMI0 (D/S)
+  P3DIR |= BIT2;
+  //P3DIR_bit.P3DIR_3 = 1;  // ULCK0
+  P3DIR |= BIT3;
+  //P5DIR_bit.P5DIR_4 = 1;  // RES
+  P5DIR |= BIT4;
+
 
   // Pin select function
-  P3SEL_bit.P3SEL_0 = 0;  // STEO0
-  P3SEL_bit.P3SEL_1 = 1;  // SIMO0
-  P3SEL_bit.P3SEL_2 = 0;  // SOMI0 (D/S)
-  P3SEL_bit.P3SEL_3 = 1;  // ULCK
-
+  //P3SEL_bit.P3SEL_0 = 0;  // STEO0
+  P3SEL &= ~BIT0;
+  //P3SEL_bit.P3SEL_1 = 1;  // SIMO0
+  P3SEL |= BIT1;
+  //P3SEL_bit.P3SEL_2 = 0;  // SOMI0 (D/S)
+  P3SEL &= ~BIT2;
+  //P3SEL_bit.P3SEL_3 = 1;  // ULCK
+  P3SEL |= BIT3;
 
   //  Toggle display reset pin.
-  P5OUT_bit.P5OUT_4 = 0;
+  //P5OUT_bit.P5OUT_4 = 0;
+  P5OUT &= ~BIT4;
   Delay(10000);
-  P5OUT_bit.P5OUT_4 = 1;
+  //P5OUT_bit.P5OUT_4 = 1;
+  P5OUT |= BIT4;
 
   // Init SPI
   U0CTL   = 0x16;   // SPI Mode, 8bit, Master mode
@@ -59,7 +71,8 @@ void LCDInit(void)
   ME2     = 0x01;   // Enable SPI0
 
   // Disable display controller.
-  P3OUT_bit.P3OUT_0 = 1;  // STE0
+  //P3OUT_bit.P3OUT_0 = 1;  // STE0
+  P3OUT |= BIT0;
 
   Delay(100);
 
@@ -88,15 +101,19 @@ void LCDInit(void)
 void LCDSend(unsigned char data, unsigned char cd) {
 
   // Enable display controller (active low).
-  P3OUT_bit.P3OUT_0 = 0;  // STE0 (CE)
+  //P3OUT_bit.P3OUT_0 = 0;  // STE0 (CE)
+  P3OUT &= ~BIT0;
 
   // command or data
   if(cd == SEND_CHR) {
-    P3OUT_bit.P3OUT_2 = 1;  // SOMI0 (D/S)
+    //P3OUT_bit.P3OUT_2 = 1;  // SOMI0 (D/S)
+    P3OUT |= BIT2;
   }
   else {
-    P3OUT_bit.P3OUT_2 = 0;  // SOMI0 (D/S)
+    //P3OUT_bit.P3OUT_2 = 0;  // SOMI0 (D/S)
+	P3OUT &= ~BIT2;
   }
+
 
   ///// SEND SPI /////
 
@@ -107,8 +124,8 @@ void LCDSend(unsigned char data, unsigned char cd) {
   while((U0TCTL & TXEPT) == 0);
 
   // Disable display controller.
-  P3OUT_bit.P3OUT_0 = 1;  // STE0 (CE)
-
+  //P3OUT_bit.P3OUT_0 = 1;  // STE0 (CE)
+  P3OUT |= BIT0;
 }
 
 /****************************************************************************/
